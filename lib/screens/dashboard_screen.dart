@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/transaction.dart';
 import '../theme/app_theme.dart';
+codex/create-initial-screen-for-finance-app
 import '../widgets/add_transaction_sheet.dart';
 import '../widgets/summary_card.dart';
 import '../widgets/transaction_tile.dart';
@@ -80,6 +81,55 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final expenses = _expenses;
     final balance = _balance;
 
+import '../widgets/summary_card.dart';
+import '../widgets/transaction_tile.dart';
+
+class DashboardScreen extends StatelessWidget {
+  const DashboardScreen({super.key});
+
+  List<MoneyTransaction> get _sampleTransactions => [
+        MoneyTransaction(
+          title: 'Salary',
+          amount: 4200,
+          date: DateTime.now().subtract(const Duration(days: 2)),
+          category: 'Main Job',
+          type: TransactionType.income,
+        ),
+        MoneyTransaction(
+          title: 'Groceries',
+          amount: 185.60,
+          date: DateTime.now().subtract(const Duration(days: 1)),
+          category: 'Food & Drinks',
+          type: TransactionType.expense,
+        ),
+        MoneyTransaction(
+          title: 'Gym Membership',
+          amount: 50.0,
+          date: DateTime.now().subtract(const Duration(days: 4)),
+          category: 'Health',
+          type: TransactionType.expense,
+        ),
+        MoneyTransaction(
+          title: 'Freelance Design',
+          amount: 620,
+          date: DateTime.now().subtract(const Duration(days: 6)),
+          category: 'Side Hustle',
+          type: TransactionType.income,
+        ),
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    final transactions = _sampleTransactions;
+    final income = transactions
+        .where((transaction) => transaction.type == TransactionType.income)
+        .fold<double>(0, (previousValue, element) => previousValue + element.amount);
+    final expenses = transactions
+        .where((transaction) => transaction.type == TransactionType.expense)
+        .fold<double>(0, (previousValue, element) => previousValue + element.amount);
+    final balance = income - expenses;
+main
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Money App'),
@@ -144,6 +194,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
               const SizedBox(height: 8),
               Card(
                 margin: EdgeInsets.zero,
+codex/create-initial-screen-for-finance-app
                 child: _transactions.isEmpty
                     ? Padding(
                         padding: const EdgeInsets.all(24),
@@ -180,6 +231,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         separatorBuilder: (context, index) => const Divider(height: 0),
                         itemCount: _transactions.length,
                       ),
+
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemBuilder: (context, index) => TransactionTile(
+                    transaction: transactions[index],
+                  ),
+                  separatorBuilder: (context, index) => const Divider(height: 0),
+                  itemCount: transactions.length,
+                ),
+ main
               ),
             ],
           ),
@@ -212,7 +274,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+codex/create-initial-screen-for-finance-app
         onPressed: _openAddTransactionSheet,
+        onPressed: () {},
+ main
         icon: const Icon(Icons.add),
         label: const Text('Add Transaction'),
       ),
