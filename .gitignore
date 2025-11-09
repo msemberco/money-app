@@ -1,0 +1,17 @@
+# Flutter/Dart/Pub related
+.dart_tool/
+.packages
+.pub-cache/
+.pub/
+build/
+
+# Project configuration
+*.code-workspace
+
+# IntelliJ/Android Studio
+.idea/
+*.iml
+
+# Miscellaneous
+.DS_Store
+*.log
