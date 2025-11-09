@@ -2,6 +2,85 @@ import 'package:flutter/material.dart';
 
 import '../models/transaction.dart';
 import '../theme/app_theme.dart';
+codex/create-initial-screen-for-finance-app
+import '../widgets/add_transaction_sheet.dart';
+import '../widgets/summary_card.dart';
+import '../widgets/transaction_tile.dart';
+
+class DashboardScreen extends StatefulWidget {
+  const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  final List<MoneyTransaction> _transactions = [
+    MoneyTransaction(
+      title: 'Salary',
+      amount: 4200,
+      date: DateTime.now().subtract(const Duration(days: 2)),
+      category: 'Main Job',
+      type: TransactionType.income,
+    ),
+    MoneyTransaction(
+      title: 'Groceries',
+      amount: 185.60,
+      date: DateTime.now().subtract(const Duration(days: 1)),
+      category: 'Food & Drinks',
+      type: TransactionType.expense,
+    ),
+    MoneyTransaction(
+      title: 'Gym Membership',
+      amount: 50.0,
+      date: DateTime.now().subtract(const Duration(days: 4)),
+      category: 'Health',
+      type: TransactionType.expense,
+    ),
+    MoneyTransaction(
+      title: 'Freelance Design',
+      amount: 620,
+      date: DateTime.now().subtract(const Duration(days: 6)),
+      category: 'Side Hustle',
+      type: TransactionType.income,
+    ),
+  ];
+
+  double get _income => _transactions
+      .where((transaction) => transaction.type == TransactionType.income)
+      .fold<double>(0, (previousValue, element) => previousValue + element.amount);
+
+  double get _expenses => _transactions
+      .where((transaction) => transaction.type == TransactionType.expense)
+      .fold<double>(0, (previousValue, element) => previousValue + element.amount);
+
+  double get _balance => _income - _expenses;
+
+  Future<void> _openAddTransactionSheet() async {
+    final newTransaction = await showModalBottomSheet<MoneyTransaction>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (context) {
+        return AddTransactionSheet(
+          onSubmit: (transaction) => Navigator.of(context).pop(transaction),
+        );
+      },
+    );
+
+    if (newTransaction != null) {
+      setState(() {
+        _transactions.insert(0, newTransaction);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final income = _income;
+    final expenses = _expenses;
+    final balance = _balance;
+
 import '../widgets/summary_card.dart';
 import '../widgets/transaction_tile.dart';
 
@@ -49,6 +128,7 @@ class DashboardScreen extends StatelessWidget {
         .where((transaction) => transaction.type == TransactionType.expense)
         .fold<double>(0, (previousValue, element) => previousValue + element.amount);
     final balance = income - expenses;
+main
 
     return Scaffold(
       appBar: AppBar(
@@ -114,6 +194,44 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 8),
               Card(
                 margin: EdgeInsets.zero,
+codex/create-initial-screen-for-finance-app
+                child: _transactions.isEmpty
+                    ? Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: const [
+                            Icon(
+                              Icons.receipt_long_outlined,
+                              size: 36,
+                              color: Colors.black54,
+                            ),
+                            SizedBox(height: 12),
+                            Text(
+                              'No transactions yet',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            SizedBox(height: 4),
+                            Text(
+                              'Add your first transaction to start tracking your finances.',
+                              style: TextStyle(color: Colors.black54),
+                            ),
+                          ],
+                        ),
+                      )
+                    : ListView.separated(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) => TransactionTile(
+                          transaction: _transactions[index],
+                        ),
+                        separatorBuilder: (context, index) => const Divider(height: 0),
+                        itemCount: _transactions.length,
+                      ),
+
                 child: ListView.separated(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -123,6 +241,7 @@ class DashboardScreen extends StatelessWidget {
                   separatorBuilder: (context, index) => const Divider(height: 0),
                   itemCount: transactions.length,
                 ),
+ main
               ),
             ],
           ),
@@ -155,7 +274,10 @@ class DashboardScreen extends StatelessWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
+codex/create-initial-screen-for-finance-app
+        onPressed: _openAddTransactionSheet,
         onPressed: () {},
+ main
         icon: const Icon(Icons.add),
         label: const Text('Add Transaction'),
       ),
