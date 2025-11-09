@@ -1,0 +1,8 @@
+{
+  "dart.flutterSdkPath": "",
+  "dart.sdkPath": "",
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": true
+  }
+}
